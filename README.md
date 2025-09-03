@@ -8,10 +8,15 @@ Projeto de C07
 - Entidades
 
 Jogador
+
 Personagem
+
 Kart
+
 Pista
+
 Corrida
+
 Conquista
 
 - Relacionamentos
