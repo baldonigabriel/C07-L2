@@ -20,3 +20,5 @@ Jogador N:M Corrida → Jogadores participam de várias corridas, e cada corrida
 Corrida 1:N Pista → Cada corrida ocorre em uma pista, mas uma pista pode receber várias corridas.
 
 Jogador N:M Conquista → Jogadores podem desbloquear várias conquistas, e cada conquista pode ser desbloqueada por vários jogadores.
+
+Nomes: José Gabriel Vilas Bôas - 2099 / Gabriel Baldoni - 451
