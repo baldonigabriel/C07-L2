@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS c07_mk;
+USE c07_mk;
+
 CREATE TABLE Personagem (
     idPersonagem INT PRIMARY KEY,
     Nome VARCHAR(45),
@@ -5,7 +8,7 @@ CREATE TABLE Personagem (
 );
 
 CREATE TABLE Jogador (
-    idJogador INT PRIMARY KEY,
+    idJogador INT AUTO_INCREMENT PRIMARY KEY,  -- Alterado para AUTO_INCREMENT
     nick_name VARCHAR(45),
     Personagem_idPersonagem INT,
     FOREIGN KEY (Personagem_idPersonagem) REFERENCES Personagem(idPersonagem)
@@ -43,16 +46,20 @@ CREATE TABLE Corrida_has_Jogador (
     Corrida_id_corrida INT,
     Jogador_idJogador INT,
     PRIMARY KEY (Corrida_id_corrida, Jogador_idJogador),
-    FOREIGN KEY (Corrida_id_corrida) REFERENCES Corrida(id_corrida),
+    FOREIGN KEY (Corrida_id_corrida) REFERENCES Corrida(id_corrida)
+        ON DELETE CASCADE,  
     FOREIGN KEY (Jogador_idJogador) REFERENCES Jogador(idJogador)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE Jogador_has_Conquista (
     Jogador_idJogador INT,
     Conquista_id_conquista INT,
     PRIMARY KEY (Jogador_idJogador, Conquista_id_conquista),
-    FOREIGN KEY (Jogador_idJogador) REFERENCES Jogador(idJogador),
+    FOREIGN KEY (Jogador_idJogador) REFERENCES Jogador(idJogador)
+        ON DELETE CASCADE,  
     FOREIGN KEY (Conquista_id_conquista) REFERENCES Conquista(id_conquista)
+        ON DELETE CASCADE  
 );
 
 INSERT INTO Personagem (idPersonagem, Nome, habilidade_especial) VALUES
@@ -111,19 +118,25 @@ INSERT INTO Jogador_has_Conquista (Jogador_idJogador, Conquista_id_conquista) VA
 (4, 4),
 (5, 5);
 
+-- Atualizando alguns dados
 UPDATE Personagem SET Nome = 'Mario Kart' WHERE idPersonagem = 1;
 UPDATE Kart SET Modelo = 'Mach 8 (Mario)' WHERE id_Kart = 1;
 
+-- Deletando alguns dados
 DELETE FROM Corrida WHERE id_corrida = 3;
 DELETE FROM Jogador WHERE idJogador = 2;
 
+-- Alterando a estrutura da tabela Jogador
 ALTER TABLE Jogador ADD COLUMN idade INT AFTER nick_name;
 
+-- Removendo a tabela Conquista
 DROP TABLE IF EXISTS Conquista;
 
+-- Criando um usuário no MySQL
 CREATE USER 'mario_usuario'@'localhost' IDENTIFIED BY 'senha_secreta';
 GRANT ALL PRIVILEGES ON *.* TO 'mario_usuario'@'localhost' WITH GRANT OPTION;
 
+-- Criando a View de Jogadores e Conquistas
 CREATE VIEW ViewJogadoresConquistas AS
 SELECT Jogador.nick_name, COUNT(Conquista.id_conquista) AS numero_conquistas
 FROM Jogador
@@ -131,6 +144,7 @@ JOIN Jogador_has_Conquista ON Jogador.idJogador = Jogador_has_Conquista.Jogador_
 JOIN Conquista ON Jogador_has_Conquista.Conquista_id_conquista = Conquista.id_conquista
 GROUP BY Jogador.idJogador;
 
+-- Criando Trigger antes de inserir corrida
 DELIMITER //
 
 CREATE TRIGGER before_insert_corrida
@@ -142,7 +156,7 @@ END //
 
 DELIMITER ;
 
-
+-- Criando a função para calcular a média do tempo da corrida
 DELIMITER //
 
 CREATE FUNCTION calcular_media_tempo_corrida()
